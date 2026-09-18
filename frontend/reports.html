@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMShop — Reports</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+    <header class="topbar">
+        <div class="topbar-logo">RMShop</div>
+        <div class="topbar-user">
+            <span id="welcome-name"></span>
+            <a href="#" id="logout-link" class="logout-link">Log out</a>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-header">
+            <a href="manager-dashboard.html" class="back-link">&larr; Dashboard</a>
+            <h1 class="page-title">Reports</h1>
+        </div>
+
+        <section class="report-section">
+            <div class="filter-bar">
+                <label>From <input type="date" id="range-start"></label>
+                <label>To <input type="date" id="range-end"></label>
+                <button class="btn-primary btn-inline" id="apply-range-btn">Apply</button>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card"><p class="summary-label">Revenue</p><p class="summary-value" id="revenue-value">—</p></div>
+                <div class="summary-card"><p class="summary-label">Restock cost</p><p class="summary-value" id="restock-cost-value">—</p></div>
+                <div class="summary-card"><p class="summary-label">Other expenditures</p><p class="summary-value" id="other-exp-value">—</p></div>
+                <div class="summary-card"><p class="summary-label">Profit</p><p class="summary-value" id="profit-value">—</p></div>
+            </div>
+
+            <div class="two-col">
+                <div class="summary-card">
+                    <p class="summary-label">Top performer</p>
+                    <p class="summary-value" id="top-employee-value">—</p>
+                    <p class="summary-sub" id="top-employee-sub"></p>
+                </div>
+                <div class="summary-card">
+                    <p class="summary-label">Projected revenue (next 30 days)</p>
+                    <p class="summary-value" id="projected-value">—</p>
+                    <p class="summary-sub" id="projected-sub"></p>
+                </div>
+            </div>
+
+            <h2 class="section-title">Most-wanted products</h2>
+            <table class="data-table">
+                <thead><tr><th>Product</th><th>Quantity sold</th></tr></thead>
+                <tbody id="most-wanted-body"></tbody>
+            </table>
+        </section>
+
+        <section class="report-section">
+            <h2 class="section-title">Cash reconciliation</h2>
+            <div class="filter-bar">
+                <label>Date <input type="date" id="reconcile-date"></label>
+                <label>Cash counted <input type="number" step="0.01" id="reconcile-actual"></label>
+                <button class="btn-primary btn-inline" id="reconcile-btn">Check</button>
+            </div>
+            <div id="reconcile-result" class="reconcile-result" hidden></div>
+        </section>
+
+        <section class="report-section">
+            <h2 class="section-title">Expenditures</h2>
+            <form id="expenditure-form" class="inline-form">
+                <input type="text" id="exp-description" placeholder="Description" required>
+                <input type="number" step="0.01" id="exp-amount" placeholder="Amount" required>
+                <button class="btn-primary btn-inline" type="submit">Add</button>
+            </form>
+            <table class="data-table">
+                <thead><tr><th>Description</th><th>Amount</th><th>Date</th></tr></thead>
+                <tbody id="expenditures-body"></tbody>
+            </table>
+        </section>
+
+        <section class="report-section">
+            <h2 class="section-title">Receipt archive</h2>
+            <table class="data-table">
+                <thead><tr><th>Receipt No.</th><th>Saved</th><th>Printed</th></tr></thead>
+                <tbody id="receipts-body"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+</html>

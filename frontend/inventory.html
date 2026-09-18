@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMShop — Inventory</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+    <header class="topbar">
+        <div class="topbar-logo">RMShop</div>
+        <div class="topbar-user">
+            <span id="welcome-name"></span>
+            <a href="#" id="logout-link" class="logout-link">Log out</a>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-header">
+            <a href="manager-dashboard.html" class="back-link">&larr; Dashboard</a>
+            <h1 class="page-title">Inventory</h1>
+            <button class="btn-primary btn-inline" id="add-product-btn">Add product</button>
+        </div>
+
+        <table class="data-table" id="products-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="products-body"></tbody>
+        </table>
+        <p id="empty-state" class="empty-state" hidden>No products yet. Add your first one to get started.</p>
+    </main>
+
+    <div class="modal-backdrop" id="add-product-modal" hidden>
+        <div class="modal">
+            <h2>Add product</h2>
+            <form id="add-product-form">
+                <label>Name
+                    <input type="text" id="new-product-name" required>
+                </label>
+                <label>Starting quantity
+                    <input type="number" id="new-product-quantity" min="0" value="0" required>
+                </label>
+                <label>Price
+                    <input type="number" id="new-product-price" min="0" step="0.01" required>
+                </label>
+                <p class="modal-error" id="add-product-error" hidden></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Add product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="restock-modal" hidden>
+        <div class="modal">
+            <h2>Restock <span id="restock-product-name"></span></h2>
+            <form id="restock-form">
+                <input type="hidden" id="restock-product-id">
+                <label>Quantity added
+                    <input type="number" id="restock-quantity" min="1" required>
+                </label>
+                <label>Cost
+                    <input type="number" id="restock-cost" min="0" step="0.01" required>
+                </label>
+                <p class="modal-error" id="restock-error" hidden></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Confirm restock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="thresholds-modal" hidden>
+        <div class="modal">
+            <h2>Stock alerts for <span id="thresholds-product-name"></span></h2>
+            <form id="thresholds-form">
+                <input type="hidden" id="thresholds-product-id">
+                <label>Low stock at or below
+                    <input type="number" id="thresholds-low" min="0" required>
+                </label>
+                <label>Critical stock at or below
+                    <input type="number" id="thresholds-critical" min="0" required>
+                </label>
+                <p class="modal-error" id="thresholds-error" hidden></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/inventory.js"></script>
+</body>
+</html>

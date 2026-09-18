@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMShop — Log in</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="brand-panel">
+            <div class="brand-content">
+                <div class="brand-logo">RMShop</div>
+                <h1>Every sale counted.<br>Every shelf accounted for.</h1>
+                <p>Built for the till, the stockroom, and everything in between.</p>
+            </div>
+        </div>
+
+        <div class="form-panel">
+            <div class="form-content">
+                <h2>RMShop Management</h2>
+                <p class="subtitle">Enter your 6-digit access code</p>
+
+                <form id="login-form" novalidate>
+                    <div class="code-inputs" id="code-inputs">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                    </div>
+
+                    <p id="error-message" class="error-message" hidden></p>
+
+                    <button type="submit" id="login-btn" class="btn-primary">
+                        <span class="btn-text">Log in</span>
+                        <span class="btn-spinner" hidden></span>
+                    </button>
+                </form>
+
+                <p class="footnote">Forgot your code? Ask your manager to reset it.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

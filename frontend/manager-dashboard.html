@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMShop — Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+    <header class="topbar">
+        <div class="topbar-logo">RMShop</div>
+        <div class="topbar-user">
+            <span id="welcome-name"></span>
+            <a href="#" id="logout-link" class="logout-link">Log out</a>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <h1 class="page-title">Dashboard</h1>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <p class="summary-label">Today's revenue</p>
+                <p class="summary-value" id="revenue-value">—</p>
+            </div>
+            <div class="summary-card">
+                <p class="summary-label">Low stock items</p>
+                <p class="summary-value" id="lowstock-value">—</p>
+            </div>
+            <div class="summary-card">
+                <p class="summary-label">Top performer today</p>
+                <p class="summary-value" id="topemployee-value">—</p>
+                <p class="summary-sub" id="topemployee-sub"></p>
+            </div>
+        </div>
+
+        <div class="nav-grid">
+            <a href="inventory.html" class="nav-card">
+                <h3>Inventory</h3>
+                <p>Manage products, stock levels, and restocking</p>
+            </a>
+            <a href="staff.html" class="nav-card">
+                <h3>Staff</h3>
+                <p>Add employees, reset access codes, view attendance</p>
+            </a>
+            <a href="reports.html" class="nav-card">
+                <h3>Reports</h3>
+                <p>Revenue, profit, projections, and cash reconciliation</p>
+            </a>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

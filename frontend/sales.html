@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMShop — Sales</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+    <header class="topbar">
+        <div class="topbar-logo">RMShop</div>
+        <div class="topbar-user">
+            <span id="welcome-name"></span>
+            <a href="#" id="logout-link" class="logout-link">Log out</a>
+        </div>
+    </header>
+
+    <main class="sales-layout">
+        <section class="product-panel">
+            <input type="text" id="product-search" class="search-input" placeholder="Search products...">
+            <div class="product-grid" id="product-grid"></div>
+        </section>
+
+        <aside class="cart-panel">
+            <h2>Current sale</h2>
+            <div id="cart-items" class="cart-items"></div>
+            <p id="cart-empty" class="empty-state-small">No items yet</p>
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cart-total-value">0.00</span>
+            </div>
+            <button class="btn-primary" id="complete-sale-btn" disabled>Complete sale</button>
+        </aside>
+    </main>
+
+    <div class="modal-backdrop" id="receipt-modal" hidden>
+        <div class="modal">
+            <h2>Sale complete</h2>
+            <p class="receipt-no" id="receipt-no"></p>
+            <div id="receipt-items" class="receipt-items"></div>
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="receipt-total-value">0.00</span>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="new-sale-btn">New sale</button>
+                <button type="button" class="btn-primary" id="print-receipt-btn">Print receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/sales.js"></script>
+</body>
+</html>

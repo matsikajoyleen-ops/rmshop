@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RMShop — Staff</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+    <header class="topbar">
+        <div class="topbar-logo">RMShop</div>
+        <div class="topbar-user">
+            <span id="welcome-name"></span>
+            <a href="#" id="logout-link" class="logout-link">Log out</a>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-header">
+            <a href="manager-dashboard.html" class="back-link">&larr; Dashboard</a>
+            <h1 class="page-title">Staff</h1>
+            <button class="btn-primary btn-inline" id="add-employee-btn">Add employee</button>
+        </div>
+
+        <table class="data-table" id="staff-table">
+            <thead>
+                <tr><th>Name</th><th>Role</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="staff-body"></tbody>
+        </table>
+        <p id="empty-state" class="empty-state" hidden>No staff accounts yet.</p>
+    </main>
+
+    <div class="modal-backdrop" id="add-employee-modal" hidden>
+        <div class="modal">
+            <h2>Add employee</h2>
+            <form id="add-employee-form">
+                <label>Full name
+                    <input type="text" id="new-employee-name" required>
+                </label>
+                <label>Role
+                    <select id="new-employee-role" class="modal-select">
+                        <option value="EMPLOYEE">Employee</option>
+                        <option value="MANAGER">Manager</option>
+                    </select>
+                </label>
+                <label>6-digit access code</label>
+                <div class="code-inputs code-inputs-modal" id="add-employee-code"></div>
+                <p class="modal-error" id="add-employee-error" hidden></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Add employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="reset-code-modal" hidden>
+        <div class="modal">
+            <h2>Reset code for <span id="reset-code-name"></span></h2>
+            <form id="reset-code-form">
+                <input type="hidden" id="reset-code-user-id">
+                <label>New 6-digit access code</label>
+                <div class="code-inputs code-inputs-modal" id="reset-code-inputs"></div>
+                <p class="modal-error" id="reset-code-error" hidden></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Save new code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="attendance-modal" hidden>
+        <div class="modal">
+            <h2>Attendance for <span id="attendance-name"></span></h2>
+            <div id="attendance-list" class="attendance-list"></div>
+            <p id="attendance-empty" class="empty-state-small" hidden>No login history yet.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/staff.js"></script>
+</body>
+</html>
