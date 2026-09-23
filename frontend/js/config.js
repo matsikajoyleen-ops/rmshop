@@ -1,2 +1,2 @@
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "https://rmshop.onrender.com/api";
 // TODO: swap for your real Railway URL once the backend is deployed

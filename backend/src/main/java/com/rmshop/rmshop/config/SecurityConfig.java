@@ -29,8 +29,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5500",
-                "http://127.0.0.1:5500",          // Live Server sometimes opens via the IP form instead of "localhost"
-                "https://rmshop.vercel.app"        // TODO: swap for your real Vercel URL once deployed
+                "http://127.0.0.1:5500",
+                "https://rmshop-seven.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
@@ -39,4 +39,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-}
+}s
