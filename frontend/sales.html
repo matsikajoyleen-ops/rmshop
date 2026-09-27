@@ -3,48 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RMShop — Sales</title>
+    <title>RMShop — POS Checkout Terminal</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛒</text></svg>">
 </head>
 <body class="app-body">
+    <!-- Ambient Glow Background -->
+    <div class="ambient-bg" aria-hidden="true">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+        <div class="ambient-orb ambient-orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Header Navigation -->
     <header class="topbar">
-        <div class="topbar-logo">RMShop</div>
+        <div style="display:flex; align-items:center; gap:1.25rem;">
+            <a href="manager-dashboard.html" class="topbar-brand">
+                <div class="brand-logo-icon" style="width:34px;height:34px;font-size:1rem;">RM</div>
+                <div class="topbar-logo">RMShop</div>
+                <span class="topbar-tag">POS Till</span>
+            </a>
+            <a href="manager-dashboard.html" class="back-link" style="padding:0.25rem 0.65rem; font-size:0.8rem;">← Dashboard</a>
+        </div>
+
         <div class="topbar-user">
-            <span id="welcome-name"></span>
-            <a href="#" id="logout-link" class="logout-link">Log out</a>
+            <div class="user-profile-badge">
+                <div class="user-avatar-circle">⚡</div>
+                <span id="welcome-name">Cashier</span>
+            </div>
+            <a href="#" id="logout-link" class="logout-link">
+                <span>Log out</span>
+                <span>↳</span>
+            </a>
         </div>
     </header>
 
     <main class="sales-layout">
+        <!-- Products Selection Panel -->
         <section class="product-panel">
-            <input type="text" id="product-search" class="search-input" placeholder="Search products...">
+            <input type="text" id="product-search" class="search-input" placeholder="🔍 Search catalog or scan barcode..." autocomplete="off">
             <div class="product-grid" id="product-grid"></div>
         </section>
 
+        <!-- Dynamic Cart Drawer -->
         <aside class="cart-panel">
-            <h2>Current sale</h2>
+            <h2>
+                <span>Current Order</span>
+                <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Active Till</span>
+            </h2>
+
             <div id="cart-items" class="cart-items"></div>
-            <p id="cart-empty" class="empty-state-small">No items yet</p>
+            <p id="cart-empty" class="empty-state-small">Cart is empty. Tap any product on the left to add items.</p>
+
             <div class="cart-total">
-                <span>Total</span>
-                <span id="cart-total-value">0.00</span>
+                <span>Total Due</span>
+                <span id="cart-total-value">$0.00</span>
             </div>
-            <button class="btn-primary" id="complete-sale-btn" disabled>Complete sale</button>
+
+            <button class="btn-primary" id="complete-sale-btn" disabled>
+                <span>⚡ Complete Transaction</span>
+            </button>
         </aside>
     </main>
 
+    <!-- Receipt Modal -->
     <div class="modal-backdrop" id="receipt-modal" hidden>
         <div class="modal">
-            <h2>Sale complete</h2>
-            <p class="receipt-no" id="receipt-no"></p>
+            <h2>Transaction Approved ✅</h2>
+            <p class="receipt-no" id="receipt-no">Receipt #</p>
             <div id="receipt-items" class="receipt-items"></div>
             <div class="cart-total">
-                <span>Total</span>
-                <span id="receipt-total-value">0.00</span>
+                <span>Total Paid</span>
+                <span id="receipt-total-value" style="color:var(--cyan-accent); font-family:var(--font-mono); font-size:1.3rem;">$0.00</span>
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn-secondary" id="new-sale-btn">New sale</button>
-                <button type="button" class="btn-primary" id="print-receipt-btn">Print receipt</button>
+                <button type="button" class="btn-secondary" id="new-sale-btn">Next Customer</button>
+                <button type="button" class="btn-primary" id="print-receipt-btn">🖨️ Print Receipt</button>
             </div>
         </div>
     </div>

@@ -3,43 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RMShop — Log in</title>
+    <title>RMShop — Intelligent Retail Management & POS</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
 <body>
+    <!-- Animated Ambient Glow Canvas -->
+    <div class="ambient-bg" aria-hidden="true">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+        <div class="ambient-orb ambient-orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
     <div class="login-wrapper">
+        <!-- Left Brand & Vision Panel -->
         <div class="brand-panel">
-            <div class="brand-content">
-                <div class="brand-logo">RMShop</div>
-                <h1>Every sale counted.<br>Every shelf accounted for.</h1>
-                <p>Built for the till, the stockroom, and everything in between.</p>
+            <div class="brand-header">
+                <div class="brand-logo-icon">RM</div>
+                <div class="brand-logo-text">RMShop</div>
+            </div>
+
+            <div class="brand-hero">
+                <div class="status-ticker-badge">
+                    <span class="pulse-dot"></span>
+                    <span>Store Network Live • POS v2.4</span>
+                </div>
+                <h1>Every sale counted.<br><span class="gradient-text">Every shelf accounted for.</span></h1>
+                <p>Enterprise retail management built for high-velocity checkout, stock intelligence, and end-to-end sales transparency.</p>
+
+                <div class="brand-feature-list">
+                    <div class="brand-feature-item">
+                        <div class="brand-feature-icon">⚡</div>
+                        <div class="brand-feature-text">
+                            <h4>Instant POS Till</h4>
+                            <p>Sub-second barcode & quick-pick checkout processing</p>
+                        </div>
+                    </div>
+                    <div class="brand-feature-item">
+                        <div class="brand-feature-icon">📦</div>
+                        <div class="brand-feature-text">
+                            <h4>Live Inventory Audit</h4>
+                            <p>Real-time low-stock alerts & automated restock alerts</p>
+                        </div>
+                    </div>
+                    <div class="brand-feature-item">
+                        <div class="brand-feature-icon">🛡️</div>
+                        <div class="brand-feature-text">
+                            <h4>Role-Based Access</h4>
+                            <p>Secure 6-digit access codes for cashiers & managers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <span>© RMShop Retail OS</span>
+                <span>Encrypted & Audited</span>
             </div>
         </div>
 
+        <!-- Right Login & Keypad Panel -->
         <div class="form-panel">
-            <div class="form-content">
-                <h2>RMShop Management</h2>
-                <p class="subtitle">Enter your 6-digit access code</p>
+            <div class="form-content" id="form-container">
+                <div class="form-header">
+                    <h2>Staff Authentication</h2>
+                    <p class="subtitle">Enter your 6-digit terminal access code</p>
+                </div>
 
                 <form id="login-form" novalidate>
                     <div class="code-inputs" id="code-inputs">
-                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
-                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
-                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
-                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
-                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
-                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off" autofocus aria-label="Digit 1">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off" aria-label="Digit 2">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off" aria-label="Digit 3">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off" aria-label="Digit 4">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off" aria-label="Digit 5">
+                        <input type="text" inputmode="numeric" maxlength="1" class="code-digit" autocomplete="off" aria-label="Digit 6">
                     </div>
 
-                    <p id="error-message" class="error-message" hidden></p>
+                    <p id="error-message" class="error-message" hidden role="alert"></p>
+
+                    <!-- Interactive On-Screen POS Numpad -->
+                    <div class="pos-numpad" id="pos-numpad" aria-label="Virtual Keypad">
+                        <button type="button" class="numpad-key" data-digit="1">1</button>
+                        <button type="button" class="numpad-key" data-digit="2">2</button>
+                        <button type="button" class="numpad-key" data-digit="3">3</button>
+                        <button type="button" class="numpad-key" data-digit="4">4</button>
+                        <button type="button" class="numpad-key" data-digit="5">5</button>
+                        <button type="button" class="numpad-key" data-digit="6">6</button>
+                        <button type="button" class="numpad-key" data-digit="7">7</button>
+                        <button type="button" class="numpad-key" data-digit="8">8</button>
+                        <button type="button" class="numpad-key" data-digit="9">9</button>
+                        <button type="button" class="numpad-key key-action" data-action="clear" title="Clear all">CLEAR</button>
+                        <button type="button" class="numpad-key" data-digit="0">0</button>
+                        <button type="button" class="numpad-key key-action" data-action="backspace" title="Delete last digit">⌫</button>
+                    </div>
 
                     <button type="submit" id="login-btn" class="btn-primary">
-                        <span class="btn-text">Log in</span>
+                        <span class="btn-text">Unlock Terminal</span>
                         <span class="btn-spinner" hidden></span>
                     </button>
                 </form>
 
-                <p class="footnote">Forgot your code? Ask your manager to reset it.</p>
+                <p class="footnote">Forgot your code? Ask your store manager to reset it.</p>
             </div>
         </div>
     </div>

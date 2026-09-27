@@ -13,9 +13,24 @@ function formatMoney(amount) {
 }
 
 async function loadProducts() {
-    const response = await fetch(`${API_BASE_URL}/products`);
-    products = await response.json();
-    renderProducts(products);
+    try {
+        const cached = localStorage.getItem("rmshop_products_cache");
+        if (cached) {
+            products = JSON.parse(cached);
+            renderProducts(products);
+        }
+    } catch (_) {}
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        if (response.ok) {
+            products = await response.json();
+            localStorage.setItem("rmshop_products_cache", JSON.stringify(products));
+            renderProducts(products);
+        }
+    } catch (err) {
+        console.error("Failed to refresh products from server", err);
+    }
 }
 
 function renderProducts(list) {

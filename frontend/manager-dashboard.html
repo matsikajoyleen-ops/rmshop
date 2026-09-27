@@ -3,49 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RMShop — Dashboard</title>
+    <title>RMShop — Store Management Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
 <body class="app-body">
+    <!-- Animated Ambient Background -->
+    <div class="ambient-bg" aria-hidden="true">
+        <div class="ambient-orb ambient-orb-1"></div>
+        <div class="ambient-orb ambient-orb-2"></div>
+        <div class="ambient-orb ambient-orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Header Navigation -->
     <header class="topbar">
-        <div class="topbar-logo">RMShop</div>
+        <a href="manager-dashboard.html" class="topbar-brand">
+            <div class="brand-logo-icon" style="width:34px;height:34px;font-size:1rem;">RM</div>
+            <div class="topbar-logo">RMShop</div>
+            <span class="topbar-tag">Enterprise</span>
+        </a>
+
+        <div class="topbar-center">
+            <div class="store-clock-widget">
+                <span class="store-live-pill">
+                    <span class="pulse-dot"></span>
+                    <span>LIVE</span>
+                </span>
+                <span id="digital-clock">--:--:--</span>
+            </div>
+        </div>
+
         <div class="topbar-user">
-            <span id="welcome-name"></span>
-            <a href="#" id="logout-link" class="logout-link">Log out</a>
+            <div class="user-profile-badge">
+                <div class="user-avatar-circle" id="user-avatar">M</div>
+                <span id="welcome-name">Manager</span>
+            </div>
+            <a href="#" id="logout-link" class="logout-link">
+                <span>Log out</span>
+                <span>↳</span>
+            </a>
         </div>
     </header>
 
     <main class="dashboard">
-        <h1 class="page-title">Dashboard</h1>
+        <!-- Dashboard Greeting Banner -->
+        <div class="dashboard-header">
+            <div class="dashboard-title-group">
+                <h1 id="dashboard-greeting">Store Overview</h1>
+                <p>Real-time revenue monitoring, inventory threshold vitals, and POS terminal management.</p>
+            </div>
+            <div class="dashboard-actions">
+                <a href="sales.html" class="btn-primary btn-inline btn-nav-pos">
+                    <span>⚡ Launch POS Till</span>
+                </a>
+            </div>
+        </div>
 
+        <!-- Summary KPI Cards -->
         <div class="summary-grid">
+            <!-- Revenue Card -->
             <div class="summary-card">
-                <p class="summary-label">Today's revenue</p>
-                <p class="summary-value" id="revenue-value">—</p>
+                <div class="summary-card-header">
+                    <span class="summary-label">Today's Revenue</span>
+                    <div class="summary-card-icon icon-revenue">💰</div>
+                </div>
+                <div class="summary-value" id="revenue-value">—</div>
+                <div class="summary-sub">
+                    <span class="trend-pill trend-up">● Live Store Sales</span>
+                    <span>Updated just now</span>
+                </div>
+                <!-- Dynamic SVG Sparkline -->
+                <div class="sparkline-container">
+                    <svg class="sparkline-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="gradRevenue" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.4"/>
+                                <stop offset="100%" stop-color="#6366f1" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,40 Q30,35 60,38 T120,25 T180,28 T240,15 T300,8 L300,50 L0,50 Z" fill="url(#gradRevenue)" />
+                        <path d="M0,40 Q30,35 60,38 T120,25 T180,28 T240,15 T300,8" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </div>
             </div>
+
+            <!-- Low Stock Card -->
             <div class="summary-card">
-                <p class="summary-label">Low stock items</p>
-                <p class="summary-value" id="lowstock-value">—</p>
+                <div class="summary-card-header">
+                    <span class="summary-label">Low Stock Alerts</span>
+                    <div class="summary-card-icon icon-stock">⚠️</div>
+                </div>
+                <div class="summary-value" id="lowstock-value">—</div>
+                <div class="summary-sub">
+                    <span class="trend-pill trend-alert" id="lowstock-pill">Threshold Monitor</span>
+                    <span>Items need replenishment</span>
+                </div>
+                <div class="sparkline-container">
+                    <svg class="sparkline-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="gradStock" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,35 Q40,30 90,32 T170,38 T230,22 T300,30 L300,50 L0,50 Z" fill="url(#gradStock)" />
+                        <path d="M0,35 Q40,30 90,32 T170,38 T230,22 T300,30" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </div>
             </div>
+
+            <!-- Top Performer Card -->
             <div class="summary-card">
-                <p class="summary-label">Top performer today</p>
-                <p class="summary-value" id="topemployee-value">—</p>
-                <p class="summary-sub" id="topemployee-sub"></p>
+                <div class="summary-card-header">
+                    <span class="summary-label">Top Performer Today</span>
+                    <div class="summary-card-icon icon-performer">🏆</div>
+                </div>
+                <div class="summary-value" id="topemployee-value">—</div>
+                <div class="summary-sub" id="topemployee-sub">Awaiting today's sales log</div>
+                <div class="sparkline-container">
+                    <svg class="sparkline-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="gradPerf" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,45 Q50,40 100,28 T200,22 T250,15 T300,5 L300,50 L0,50 Z" fill="url(#gradPerf)" />
+                        <path d="M0,45 Q50,40 100,28 T200,22 T250,15 T300,5" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </div>
             </div>
+        </div>
+
+        <!-- Store Modules Navigation Hub -->
+        <div class="section-heading-row">
+            <h2>Store Operations Hub</h2>
+            <span style="font-size:0.85rem; color:var(--text-muted);">Select a module to manage</span>
         </div>
 
         <div class="nav-grid">
             <a href="inventory.html" class="nav-card">
-                <h3>Inventory</h3>
-                <p>Manage products, stock levels, and restocking</p>
+                <div>
+                    <div class="nav-card-top">
+                        <div class="nav-card-icon-box">📦</div>
+                        <div class="nav-arrow-badge">→</div>
+                    </div>
+                    <h3>Inventory Management</h3>
+                    <p>Track live stock levels, configure low-stock alerts, and record wholesale restocking shipments.</p>
+                </div>
             </a>
+
+            <a href="sales.html" class="nav-card">
+                <div>
+                    <div class="nav-card-top">
+                        <div class="nav-card-icon-box" style="background:rgba(6,182,212,0.12); border-color:rgba(6,182,212,0.3); color:#38bdf8;">🛒</div>
+                        <div class="nav-arrow-badge">→</div>
+                    </div>
+                    <h3>POS Cashier Till</h3>
+                    <p>Ring up walk-in customers, scan items, process orders instantly, and print customer receipts.</p>
+                </div>
+            </a>
+
             <a href="staff.html" class="nav-card">
-                <h3>Staff</h3>
-                <p>Add employees, reset access codes, view attendance</p>
+                <div>
+                    <div class="nav-card-top">
+                        <div class="nav-card-icon-box" style="background:rgba(139,92,246,0.12); border-color:rgba(139,92,246,0.3); color:#c084fc;">👥</div>
+                        <div class="nav-arrow-badge">→</div>
+                    </div>
+                    <h3>Staff Management</h3>
+                    <p>Provision employees, generate secure 6-digit access codes, and monitor clock-in login timestamps.</p>
+                </div>
             </a>
+
             <a href="reports.html" class="nav-card">
-                <h3>Reports</h3>
-                <p>Revenue, profit, projections, and cash reconciliation</p>
+                <div>
+                    <div class="nav-card-top">
+                        <div class="nav-card-icon-box" style="background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3); color:#34d399;">📊</div>
+                        <div class="nav-arrow-badge">→</div>
+                    </div>
+                    <h3>Financial & Sales Reports</h3>
+                    <p>Analyze revenue trends, cash drawer reconciliation, expenditures, and 30-day sales projections.</p>
+                </div>
             </a>
         </div>
     </main>
