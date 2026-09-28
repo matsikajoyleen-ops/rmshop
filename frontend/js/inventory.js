@@ -17,10 +17,7 @@ function statusBadge(level) {
     return `<span class="badge ${classes[level]}">${labels[level]}</span>`;
 }
 
-async function loadProducts() {
-    const response = await fetch(`${API_BASE_URL}/products`);
-    const products = await response.json();
-
+function renderProductRows(products) {
     tableBody.innerHTML = "";
     emptyState.hidden = products.length > 0;
 
@@ -38,6 +35,29 @@ async function loadProducts() {
         `;
         tableBody.appendChild(row);
     });
+}
+
+async function loadProducts() {
+    // 1. Instant 0ms cache rendering
+    try {
+        const cached = localStorage.getItem("rmshop_products_cache");
+        if (cached) {
+            const list = JSON.parse(cached);
+            if (Array.isArray(list) && list.length > 0) renderProductRows(list);
+        }
+    } catch (_) {}
+
+    // 2. Fetch fresh data in background
+    try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        if (response.ok) {
+            const products = await response.json();
+            localStorage.setItem("rmshop_products_cache", JSON.stringify(products));
+            renderProductRows(products);
+        }
+    } catch (err) {
+        console.error("Failed to refresh products", err);
+    }
 }
 
 function openModal(id) { document.getElementById(id).hidden = false; }

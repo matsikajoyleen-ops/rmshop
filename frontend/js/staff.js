@@ -45,10 +45,7 @@ function statusBadge(active) {
     return active ? `<span class="badge badge-ok">Active</span>` : `<span class="badge badge-critical">Deactivated</span>`;
 }
 
-async function loadStaff() {
-    const response = await fetch(`${API_BASE_URL}/users`);
-    const users = await response.json();
-
+function renderStaffRows(users) {
     tableBody.innerHTML = "";
     emptyState.hidden = users.length > 0;
 
@@ -66,6 +63,27 @@ async function loadStaff() {
         `;
         tableBody.appendChild(row);
     });
+}
+
+async function loadStaff() {
+    try {
+        const cached = localStorage.getItem("rmshop_staff_cache");
+        if (cached) {
+            const list = JSON.parse(cached);
+            if (Array.isArray(list) && list.length > 0) renderStaffRows(list);
+        }
+    } catch (_) {}
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/users`);
+        if (response.ok) {
+            const users = await response.json();
+            localStorage.setItem("rmshop_staff_cache", JSON.stringify(users));
+            renderStaffRows(users);
+        }
+    } catch (err) {
+        console.error("Failed to refresh staff", err);
+    }
 }
 
 function openModal(id) { document.getElementById(id).hidden = false; }
