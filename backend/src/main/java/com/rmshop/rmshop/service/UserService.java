@@ -86,6 +86,16 @@ public class UserService {
         return user;
     }
 
+    // For clock-ins made by mistake. The log must belong to this user, so a
+    // wrong id in the URL can't remove someone else's record.
+    public void deleteAttendance(Long userId, Long logId) {
+        AttendanceLog log = attendanceLogRepository.findById(logId)
+                .filter(entry -> entry.getEmployee().getId().equals(userId))
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "ATTENDANCE_NOT_FOUND",
+                        "That clock-in record doesn't exist for this staff member. It may already have been removed."));
+        attendanceLogRepository.delete(log);
+    }
+
     public List<User> listUsers() {
         return userRepository.findAll();
     }

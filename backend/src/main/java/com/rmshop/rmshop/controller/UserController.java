@@ -72,6 +72,13 @@ public class UserController {
                 .toList();
     }
 
+    @DeleteMapping("/{id}/attendance/{logId}")
+    public ResponseEntity<Void> deleteAttendance(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @PathVariable Long id, @PathVariable Long logId) {
+        userService.requireManager(requesterId);
+        userService.deleteAttendance(id, logId);
+        return ResponseEntity.noContent().build();
+    }
+
     public record LoginRequest(String accessCode) {}
     public record CreateUserRequest(String fullName, User.Role role, String accessCode, String email) {}
     public record ChangeAccessCodeRequest(String newAccessCode) {}

@@ -189,22 +189,58 @@ tableBody.addEventListener("click", async (e) => {
     if (attendanceBtn) {
         document.getElementById("attendance-name").textContent = attendanceBtn.dataset.name;
         openModal("attendance-modal");
-
-        const response = await fetch(`${API_BASE_URL}/users/${attendanceBtn.dataset.attendance}/attendance`, { headers: authHeaders() });
-        const logs = await response.json();
-
-        const listEl = document.getElementById("attendance-list");
-        const emptyEl = document.getElementById("attendance-empty");
-        listEl.innerHTML = "";
-        emptyEl.hidden = logs.length > 0;
-
-        logs.forEach(log => {
-            const row = document.createElement("div");
-            row.className = "attendance-row";
-            row.textContent = formatDateTime(log.loginTime);
-            listEl.appendChild(row);
-        });
+        loadAttendance(attendanceBtn.dataset.attendance);
     }
+});
+
+let attendanceUserId = null;
+
+async function loadAttendance(userId) {
+    attendanceUserId = userId;
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/attendance`, { headers: authHeaders() });
+    const logs = await response.json();
+
+    const listEl = document.getElementById("attendance-list");
+    const emptyEl = document.getElementById("attendance-empty");
+    listEl.innerHTML = "";
+    emptyEl.hidden = logs.length > 0;
+
+    logs.forEach(log => {
+        const row = document.createElement("div");
+        row.className = "attendance-row";
+        const time = document.createElement("span");
+        time.textContent = formatDateTime(log.loginTime);
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "btn-link";
+        remove.textContent = "Remove";
+        remove.dataset.removeLog = log.id;
+        remove.dataset.time = time.textContent;
+        row.append(time, remove);
+        listEl.appendChild(row);
+    });
+}
+
+// Removes a clock-in made by mistake (e.g. someone logged in on the wrong account)
+document.getElementById("attendance-list").addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-remove-log]");
+    if (!btn) return;
+    const name = document.getElementById("attendance-name").textContent;
+    if (!confirm(`Remove ${name}'s clock-in at ${btn.dataset.time}? This can't be undone.`)) return;
+
+    btn.disabled = true;
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${attendanceUserId}/attendance/${btn.dataset.removeLog}`,
+            { method: "DELETE", headers: authHeaders() });
+        if (!response.ok && response.status !== 404) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message);
+        }
+    } catch (err) {
+        alert(err.message || "Could not remove the record. Try again.");
+    }
+    // 404 means it was already removed; either way, show the current list
+    loadAttendance(attendanceUserId);
 });
 
 document.getElementById("reset-code-form").addEventListener("submit", async (e) => {
