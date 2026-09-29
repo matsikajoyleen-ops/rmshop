@@ -75,9 +75,9 @@ async function loadDashboard() {
 
     try {
         const [revenueRes, lowStockRes, topEmployeeRes] = await Promise.all([
-            fetch(`${API_BASE_URL}/reports/revenue?start=${today}&end=${today}`).catch(() => null),
-            fetch(`${API_BASE_URL}/products/low-stock`).catch(() => null),
-            fetch(`${API_BASE_URL}/reports/top-employee?start=${today}&end=${today}`).catch(() => null)
+            fetch(`${API_BASE_URL}/reports/revenue?start=${today}&end=${today}`, { headers: authHeaders() }).catch(() => null),
+            fetch(`${API_BASE_URL}/products/low-stock`, { headers: authHeaders() }).catch(() => null),
+            fetch(`${API_BASE_URL}/reports/top-employee?start=${today}&end=${today}`, { headers: authHeaders() }).catch(() => null)
         ]);
 
         let cachePayload = {};

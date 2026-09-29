@@ -1,19 +1,22 @@
 const API_BASE_URL = "https://rmshop.onrender.com/api";
-// TODO: swap for your real Railway URL once the backend is deployed
 
-// 1. Instant background pre-warm on every page load
-(function prewarmOnLoad() {
+// Attaches the logged-in user's id so manager-only endpoints know who's asking.
+function authHeaders(extra = {}) {
+    const stored = localStorage.getItem("rmshop_user");
+    const user = stored ? JSON.parse(stored) : null;
+    return {
+        ...extra,
+        ...(user ? { "X-User-Id": String(user.id) } : {})
+    };
+}
+
+// Pre-warm the backend on page load, then ping every 4 minutes while a tab is
+// open so Render's free tier doesn't put the service to sleep mid-shift.
+function pingBackend() {
     try {
         fetch(`${API_BASE_URL}/products`, { method: "GET", cache: "no-store", mode: "cors" })
             .catch(() => {});
     } catch (_) {}
-})();
-
-// 2. Active tab keep-alive heartbeat: Pings Render every 4 minutes while any RMShop tab is open
-// This completely stops Render from sleeping while you are using the app!
-setInterval(() => {
-    try {
-        fetch(`${API_BASE_URL}/products`, { method: "GET", cache: "no-store", mode: "cors" })
-            .catch(() => {});
-    } catch (_) {}
-}, 4 * 60 * 1000);
+}
+pingBackend();
+setInterval(pingBackend, 4 * 60 * 1000);

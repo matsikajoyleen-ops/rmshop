@@ -2,6 +2,7 @@ package com.rmshop.rmshop.controller;
 
 import com.rmshop.rmshop.model.Product;
 import com.rmshop.rmshop.service.ProductService;
+import com.rmshop.rmshop.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,35 +14,40 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final UserService userService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, UserService userService) {
         this.productService = productService;
+        this.userService = userService;
     }
 
     @PostMapping
-    public Product addProduct(@RequestBody CreateProductRequest request) {
+    public Product addProduct(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @RequestBody CreateProductRequest request) {
+        userService.requireManager(requesterId);
         return productService.addProduct(request.name(), request.quantity(), request.price());
     }
 
+    // Open: the Sales screen needs this for every employee, every sale
     @GetMapping
     public List<Product> listProducts() {
         return productService.listProducts();
     }
 
-    // FR-7: manager's low/critical stock alert list
     @GetMapping("/low-stock")
-    public List<Product> listLowStockProducts() {
+    public List<Product> listLowStockProducts(@RequestHeader(value = "X-User-Id", required = false) Long requesterId) {
+        userService.requireManager(requesterId);
         return productService.listLowStockProducts();
     }
 
-    // FR-8: record a restock
     @PostMapping("/{id}/restock")
-    public ResponseEntity<Product> restock(@PathVariable Long id, @RequestBody RestockRequest request) {
+    public ResponseEntity<Product> restock(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @PathVariable Long id, @RequestBody RestockRequest request) {
+        userService.requireManager(requesterId);
         return ResponseEntity.ok(productService.restock(id, request.quantityAdded(), request.cost()));
     }
 
     @PutMapping("/{id}/thresholds")
-    public ResponseEntity<Product> updateThresholds(@PathVariable Long id, @RequestBody UpdateThresholdsRequest request) {
+    public ResponseEntity<Product> updateThresholds(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @PathVariable Long id, @RequestBody UpdateThresholdsRequest request) {
+        userService.requireManager(requesterId);
         return ResponseEntity.ok(productService.updateThresholds(id, request.lowStockThreshold(), request.criticalStockThreshold()));
     }
 

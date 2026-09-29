@@ -22,7 +22,7 @@ async function loadProducts() {
     } catch (_) {}
 
     try {
-        const response = await fetch(`${API_BASE_URL}/products`);
+        const response = await fetch(`${API_BASE_URL}/products`, { headers: authHeaders() });
         if (response.ok) {
             products = await response.json();
             localStorage.setItem("rmshop_products_cache", JSON.stringify(products));
@@ -117,7 +117,7 @@ document.getElementById("complete-sale-btn").addEventListener("click", async () 
     try {
         const saleResponse = await fetch(`${API_BASE_URL}/sales`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ employeeId: currentUser.id, lines })
         });
         if (!saleResponse.ok) throw new Error("Sale failed");
@@ -125,7 +125,7 @@ document.getElementById("complete-sale-btn").addEventListener("click", async () 
 
         const receiptResponse = await fetch(`${API_BASE_URL}/receipts`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ saleId: sale.id })
         });
         if (!receiptResponse.ok) throw new Error("Receipt save failed");
@@ -160,7 +160,7 @@ function showReceipt(sale) {
 
 document.getElementById("print-receipt-btn").addEventListener("click", async () => {
     if (!lastReceipt) return;
-    await fetch(`${API_BASE_URL}/receipts/${lastReceipt.id}/print`, { method: "PUT" });
+    await fetch(`${API_BASE_URL}/receipts/${lastReceipt.id}/print`, { method: "PUT", headers: authHeaders() });
     window.print();
 });
 

@@ -49,7 +49,7 @@ async function loadProducts() {
 
     // 2. Fetch fresh data in background
     try {
-        const response = await fetch(`${API_BASE_URL}/products`);
+        const response = await fetch(`${API_BASE_URL}/products`, { headers: authHeaders() });
         if (response.ok) {
             const products = await response.json();
             localStorage.setItem("rmshop_products_cache", JSON.stringify(products));
@@ -87,7 +87,7 @@ document.getElementById("add-product-form").addEventListener("submit", async (e)
     try {
         const response = await fetch(`${API_BASE_URL}/products`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ name, quantity, price })
         });
         if (!response.ok) throw new Error();
@@ -132,7 +132,7 @@ document.getElementById("restock-form").addEventListener("submit", async (e) => 
     try {
         const response = await fetch(`${API_BASE_URL}/products/${id}/restock`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ quantityAdded, cost })
         });
         if (!response.ok) throw new Error();
@@ -158,7 +158,7 @@ document.getElementById("thresholds-form").addEventListener("submit", async (e) 
     try {
         const response = await fetch(`${API_BASE_URL}/products/${id}/thresholds`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ lowStockThreshold, criticalStockThreshold })
         });
         if (!response.ok) throw new Error();

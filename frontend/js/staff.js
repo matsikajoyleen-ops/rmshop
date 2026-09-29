@@ -75,7 +75,7 @@ async function loadStaff() {
     } catch (_) {}
 
     try {
-        const response = await fetch(`${API_BASE_URL}/users`);
+        const response = await fetch(`${API_BASE_URL}/users`, { headers: authHeaders() });
         if (response.ok) {
             const users = await response.json();
             localStorage.setItem("rmshop_staff_cache", JSON.stringify(users));
@@ -116,7 +116,7 @@ document.getElementById("add-employee-form").addEventListener("submit", async (e
     try {
         const response = await fetch(`${API_BASE_URL}/users`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ fullName, role, accessCode })
         });
         if (!response.ok) {
@@ -147,7 +147,7 @@ tableBody.addEventListener("click", async (e) => {
     if (deactivateBtn) {
         const confirmed = confirm(`Deactivate ${deactivateBtn.dataset.name}? They will no longer be able to log in.`);
         if (!confirmed) return;
-        await fetch(`${API_BASE_URL}/users/${deactivateBtn.dataset.deactivate}/deactivate`, { method: "PUT" });
+        await fetch(`${API_BASE_URL}/users/${deactivateBtn.dataset.deactivate}/deactivate`, { method: "PUT", headers: authHeaders() });
         loadStaff();
         return;
     }
@@ -157,7 +157,7 @@ tableBody.addEventListener("click", async (e) => {
         document.getElementById("attendance-name").textContent = attendanceBtn.dataset.name;
         openModal("attendance-modal");
 
-        const response = await fetch(`${API_BASE_URL}/users/${attendanceBtn.dataset.attendance}/attendance`);
+        const response = await fetch(`${API_BASE_URL}/users/${attendanceBtn.dataset.attendance}/attendance`, { headers: authHeaders() });
         const logs = await response.json();
 
         const listEl = document.getElementById("attendance-list");
@@ -191,7 +191,7 @@ document.getElementById("reset-code-form").addEventListener("submit", async (e) 
     try {
         const response = await fetch(`${API_BASE_URL}/users/${userId}/access-code`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ newAccessCode })
         });
         if (!response.ok) {

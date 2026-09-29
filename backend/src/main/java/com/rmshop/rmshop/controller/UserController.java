@@ -21,7 +21,7 @@ public class UserController {
         this.attendanceLogRepository = attendanceLogRepository;
     }
 
-    // FR-1, FR-13: manager and employee login share this endpoint
+    // Open: this IS the login step, there's no logged-in user yet to check
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@RequestBody LoginRequest request) {
         return userService.authenticate(request.accessCode())
@@ -29,36 +29,36 @@ public class UserController {
                 .orElse(ResponseEntity.status(401).build());
     }
 
-    // FR-2: manager adds a new employee (or manager) account
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<UserResponse> createUser(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @RequestBody CreateUserRequest request) {
+        userService.requireManager(requesterId);
         User user = userService.createUser(request.fullName(), request.role(), request.accessCode());
         return ResponseEntity.ok(UserResponse.from(user));
     }
 
-    // FR-3: manager deactivates an employee instead of deleting them
     @PutMapping("/{id}/deactivate")
-    public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deactivateUser(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @PathVariable Long id) {
+        userService.requireManager(requesterId);
         userService.deactivateUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    // FR-4: manager changes an employee's access code
     @PutMapping("/{id}/access-code")
-    public ResponseEntity<Void> changeAccessCode(@PathVariable Long id, @RequestBody ChangeAccessCodeRequest request) {
+    public ResponseEntity<Void> changeAccessCode(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @PathVariable Long id, @RequestBody ChangeAccessCodeRequest request) {
+        userService.requireManager(requesterId);
         userService.changeAccessCode(id, request.newAccessCode());
         return ResponseEntity.noContent().build();
     }
 
-    // Staff Management screen: list all users
     @GetMapping
-    public List<UserResponse> listUsers() {
+    public List<UserResponse> listUsers(@RequestHeader(value = "X-User-Id", required = false) Long requesterId) {
+        userService.requireManager(requesterId);
         return userService.listUsers().stream().map(UserResponse::from).toList();
     }
 
-    // FR-14: manager views an employee's login history
     @GetMapping("/{id}/attendance")
-    public List<AttendanceLogResponse> getAttendance(@PathVariable Long id) {
+    public List<AttendanceLogResponse> getAttendance(@RequestHeader(value = "X-User-Id", required = false) Long requesterId, @PathVariable Long id) {
+        userService.requireManager(requesterId);
         return attendanceLogRepository.findByEmployeeIdOrderByLoginTimeDesc(id).stream()
                 .map(log -> new AttendanceLogResponse(log.getId(), log.getLoginTime()))
                 .toList();

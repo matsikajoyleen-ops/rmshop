@@ -2,6 +2,7 @@ package com.rmshop.rmshop.controller;
 
 import com.rmshop.rmshop.model.Receipt;
 import com.rmshop.rmshop.service.ReceiptService;
+import com.rmshop.rmshop.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +14,14 @@ import java.util.List;
 public class ReceiptController {
 
     private final ReceiptService receiptService;
+    private final UserService userService;
 
-    public ReceiptController(ReceiptService receiptService) {
+    public ReceiptController(ReceiptService receiptService, UserService userService) {
         this.receiptService = receiptService;
+        this.userService = userService;
     }
 
+    // Open: every employee needs these right after a sale
     @PostMapping
     public ReceiptResponse saveReceipt(@RequestBody SaveReceiptRequest request) {
         return ReceiptResponse.from(receiptService.saveReceipt(request.saleId()));
@@ -35,9 +39,10 @@ public class ReceiptController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // FR-11: manager-only per the SRS — not yet enforced, same open access-control gap as everywhere else
+    // Manager-only: the full archive (FR-11)
     @GetMapping
-    public List<ReceiptResponse> listAll() {
+    public List<ReceiptResponse> listAll(@RequestHeader(value = "X-User-Id", required = false) Long requesterId) {
+        userService.requireManager(requesterId);
         return receiptService.listAll().stream().map(ReceiptResponse::from).toList();
     }
 

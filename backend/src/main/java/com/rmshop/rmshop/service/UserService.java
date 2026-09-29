@@ -1,5 +1,6 @@
 package com.rmshop.rmshop.service;
 
+import com.rmshop.rmshop.exception.ForbiddenException;
 import com.rmshop.rmshop.model.AttendanceLog;
 import com.rmshop.rmshop.model.User;
 import com.rmshop.rmshop.repository.AttendanceLogRepository;
@@ -60,6 +61,20 @@ public class UserService {
 
     public List<User> listUsers() {
         return userRepository.findAll();
+    }
+
+    // Every manager-only endpoint calls this first. Throws if the requester
+    // isn't a logged-in, active manager; ApiExceptionHandler turns that into a 403.
+    public User requireManager(Long userId) {
+        if (userId == null) {
+            throw new ForbiddenException("Log in required.");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ForbiddenException("Log in required."));
+        if (!user.isActive() || user.getRole() != User.Role.MANAGER) {
+            throw new ForbiddenException("Manager access required.");
+        }
+        return user;
     }
 
     private String hashAccessCode(String rawAccessCode) {

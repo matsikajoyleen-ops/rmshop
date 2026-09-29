@@ -22,10 +22,10 @@ async function loadRangeReports() {
     const end = document.getElementById("range-end").value;
 
     const [revenueRes, topEmpRes, projectionRes, mostWantedRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/reports/revenue?start=${start}&end=${end}`),
-        fetch(`${API_BASE_URL}/reports/top-employee?start=${start}&end=${end}`),
-        fetch(`${API_BASE_URL}/reports/projected-revenue?start=${start}&end=${end}&projectedDays=30`),
-        fetch(`${API_BASE_URL}/reports/most-wanted?start=${start}&end=${end}`)
+        fetch(`${API_BASE_URL}/reports/revenue?start=${start}&end=${end}`, { headers: authHeaders() }),
+        fetch(`${API_BASE_URL}/reports/top-employee?start=${start}&end=${end}`, { headers: authHeaders() }),
+        fetch(`${API_BASE_URL}/reports/projected-revenue?start=${start}&end=${end}&projectedDays=30`, { headers: authHeaders() }),
+        fetch(`${API_BASE_URL}/reports/most-wanted?start=${start}&end=${end}`, { headers: authHeaders() })
     ]);
 
     const revenue = await revenueRes.json();
@@ -55,7 +55,7 @@ document.getElementById("reconcile-btn").addEventListener("click", async () => {
     const actualCash = document.getElementById("reconcile-actual").value;
     if (!actualCash) return;
 
-    const response = await fetch(`${API_BASE_URL}/reports/reconcile?date=${date}&actualCash=${actualCash}`);
+    const response = await fetch(`${API_BASE_URL}/reports/reconcile?date=${date}&actualCash=${actualCash}`, { headers: authHeaders() });
     const result = await response.json();
 
     const discrepancy = Number(result.discrepancy);
@@ -71,7 +71,7 @@ document.getElementById("reconcile-btn").addEventListener("click", async () => {
 });
 
 async function loadExpenditures() {
-    const response = await fetch(`${API_BASE_URL}/expenditures`);
+    const response = await fetch(`${API_BASE_URL}/expenditures`, { headers: authHeaders() });
     const expenditures = await response.json();
     document.getElementById("expenditures-body").innerHTML = expenditures.length
         ? expenditures.map(e => `<tr><td>${e.description}</td><td>${formatMoney(e.amount)}</td><td>${e.expenseDate}</td></tr>`).join("")
@@ -86,7 +86,7 @@ document.getElementById("expenditure-form").addEventListener("submit", async (e)
 
     await fetch(`${API_BASE_URL}/expenditures`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ description, amount })
     });
 
@@ -100,7 +100,7 @@ function formatDateTime(iso) {
 }
 
 async function loadReceipts() {
-    const response = await fetch(`${API_BASE_URL}/receipts`);
+    const response = await fetch(`${API_BASE_URL}/receipts`, { headers: authHeaders() });
     const receipts = await response.json();
     document.getElementById("receipts-body").innerHTML = receipts.length
         ? receipts.map(r => `<tr><td>${r.receiptNo}</td><td>${formatDateTime(r.savedAt)}</td><td>${formatDateTime(r.printedAt)}</td></tr>`).join("")

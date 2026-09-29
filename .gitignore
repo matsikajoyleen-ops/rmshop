@@ -1,2 +1,7 @@
 .vscode/
 backend/target/
+node_modules/
+server.cjs
+.DS_Store
+Thumbs.db
+*.log
