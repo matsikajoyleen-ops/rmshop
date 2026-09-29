@@ -21,6 +21,10 @@ public class User {
     @Column(name = "access_code", nullable = false)
     private String accessCode;
 
+    // Only managers need one: it is where password-reset codes are sent
+    @Column(name = "email", length = 254, unique = true)
+    private String email;
+
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
@@ -50,6 +54,9 @@ public class User {
 
     public String getAccessCode() { return accessCode; }
     public void setAccessCode(String accessCode) { this.accessCode = accessCode; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }

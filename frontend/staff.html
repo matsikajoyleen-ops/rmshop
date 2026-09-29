@@ -51,6 +51,7 @@
                     <tr>
                         <th>Employee Full Name</th>
                         <th>Terminal Role</th>
+                        <th>Reset Email</th>
                         <th>Account Status</th>
                         <th class="actions-cell">Actions</th>
                     </tr>
@@ -75,12 +76,34 @@
                         <option value="MANAGER">Store Manager (Admin)</option>
                     </select>
                 </label>
+                <label id="new-employee-email-label" hidden>Email for access-code resets (managers)
+                    <input type="email" id="new-employee-email" placeholder="e.g. manager@gmail.com" autocomplete="off">
+                </label>
                 <label>Assign 6-Digit Access Code</label>
                 <div class="code-inputs code-inputs-modal" id="add-employee-code"></div>
                 <p class="modal-error" id="add-employee-error" hidden></p>
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
                     <button type="submit" class="btn-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Set Email Modal -->
+    <div class="modal-backdrop" id="email-modal" hidden>
+        <div class="modal">
+            <h2>Reset email for <span id="email-modal-name" style="color:var(--cyan-accent);"></span></h2>
+            <form id="email-form" novalidate>
+                <input type="hidden" id="email-user-id">
+                <label>Email address
+                    <input type="email" id="email-input" placeholder="e.g. manager@gmail.com" autocomplete="off">
+                </label>
+                <p class="modal-error" id="email-modal-error" hidden></p>
+                <p class="empty-state-small" style="margin-bottom:0;">If this manager forgets their access code, the confirmation code is sent here.</p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Save Email</button>
                 </div>
             </form>
         </div>

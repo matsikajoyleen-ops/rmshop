@@ -45,20 +45,34 @@ function statusBadge(active) {
     return active ? `<span class="badge badge-ok">Active</span>` : `<span class="badge badge-critical">Deactivated</span>`;
 }
 
+function escapeHtml(text) {
+    return String(text ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function emailCell(user) {
+    if (user.email) return escapeHtml(user.email);
+    return user.role === "MANAGER"
+        ? `<span class="muted-cell">Not set: can't reset by email</span>`
+        : `<span class="muted-cell">—</span>`;
+}
+
 function renderStaffRows(users) {
     tableBody.innerHTML = "";
     emptyState.hidden = users.length > 0;
 
     users.forEach(user => {
+        const name = escapeHtml(user.fullName);
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${user.fullName}</td>
-            <td>${user.role}</td>
+            <td>${name}</td>
+            <td>${escapeHtml(user.role)}</td>
+            <td>${emailCell(user)}</td>
             <td>${statusBadge(user.active)}</td>
             <td class="actions-cell">
-                <button class="btn-link" data-attendance="${user.id}" data-name="${user.fullName}">Attendance</button>
-                <button class="btn-link" data-reset="${user.id}" data-name="${user.fullName}">Reset code</button>
-                ${user.active ? `<button class="btn-link" data-deactivate="${user.id}" data-name="${user.fullName}">Deactivate</button>` : ""}
+                <button class="btn-link" data-attendance="${user.id}" data-name="${name}">Attendance</button>
+                <button class="btn-link" data-reset="${user.id}" data-name="${name}">Reset code</button>
+                <button class="btn-link" data-email="${user.id}" data-name="${name}" data-current="${escapeHtml(user.email || "")}">${user.email ? "Change email" : "Set email"}</button>
+                ${user.active ? `<button class="btn-link" data-deactivate="${user.id}" data-name="${name}">Deactivate</button>` : ""}
             </td>
         `;
         tableBody.appendChild(row);
@@ -93,8 +107,15 @@ document.querySelectorAll("[data-close-modal]").forEach(btn => {
     btn.addEventListener("click", () => { btn.closest(".modal-backdrop").hidden = true; });
 });
 
+const roleSelect = document.getElementById("new-employee-role");
+function syncEmailField() {
+    document.getElementById("new-employee-email-label").hidden = roleSelect.value !== "MANAGER";
+}
+roleSelect.addEventListener("change", syncEmailField);
+
 document.getElementById("add-employee-btn").addEventListener("click", () => {
     addEmployeeCode.clear();
+    syncEmailField();
     openModal("add-employee-modal");
 });
 
@@ -106,6 +127,7 @@ document.getElementById("add-employee-form").addEventListener("submit", async (e
     const fullName = document.getElementById("new-employee-name").value.trim();
     const role = document.getElementById("new-employee-role").value;
     const accessCode = addEmployeeCode.getValue();
+    const email = role === "MANAGER" ? document.getElementById("new-employee-email").value.trim() : "";
 
     if (!fullName || accessCode.length !== 6) {
         errorEl.textContent = "Enter a name and all 6 digits of the access code.";
@@ -117,7 +139,7 @@ document.getElementById("add-employee-form").addEventListener("submit", async (e
         const response = await fetch(`${API_BASE_URL}/users`, {
             method: "POST",
             headers: authHeaders({ "Content-Type": "application/json" }),
-            body: JSON.stringify({ fullName, role, accessCode })
+            body: JSON.stringify({ fullName, role, accessCode, email: email || null })
         });
         if (!response.ok) {
             const data = await response.json().catch(() => ({}));
@@ -140,6 +162,17 @@ tableBody.addEventListener("click", async (e) => {
         document.getElementById("reset-code-name").textContent = resetBtn.dataset.name;
         resetCode.clear();
         openModal("reset-code-modal");
+        return;
+    }
+
+    const emailBtn = e.target.closest("[data-email]");
+    if (emailBtn) {
+        document.getElementById("email-user-id").value = emailBtn.dataset.email;
+        document.getElementById("email-modal-name").textContent = emailBtn.dataset.name;
+        document.getElementById("email-input").value = emailBtn.dataset.current;
+        document.getElementById("email-modal-error").hidden = true;
+        openModal("email-modal");
+        document.getElementById("email-input").focus();
         return;
     }
 
@@ -202,6 +235,39 @@ document.getElementById("reset-code-form").addEventListener("submit", async (e) 
         closeModal("reset-code-modal");
     } catch (err) {
         errorEl.textContent = err.message || "Could not reset the code. Try again.";
+        errorEl.hidden = false;
+    }
+});
+
+
+document.getElementById("email-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById("email-modal-error");
+    const input = document.getElementById("email-input");
+    errorEl.hidden = true;
+
+    const userId = document.getElementById("email-user-id").value;
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}/email`, {
+            method: "PUT",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify({ email: input.value })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            // The server says exactly what's wrong with the address, e.g. a missing @
+            errorEl.textContent = data.suggestion
+                ? `${data.message} We filled it in for you. Click Save to use it.`
+                : (data.message || "Could not save the email.");
+            if (data.suggestion) input.value = data.suggestion;
+            errorEl.hidden = false;
+            input.focus();
+            return;
+        }
+        closeModal("email-modal");
+        loadStaff();
+    } catch (err) {
+        errorEl.textContent = "Could not reach the server. Try again.";
         errorEl.hidden = false;
     }
 });

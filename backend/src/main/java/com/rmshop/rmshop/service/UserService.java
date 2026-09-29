@@ -1,36 +1,41 @@
 package com.rmshop.rmshop.service;
 
+import com.rmshop.rmshop.exception.ApiException;
 import com.rmshop.rmshop.exception.ForbiddenException;
 import com.rmshop.rmshop.model.AttendanceLog;
 import com.rmshop.rmshop.model.User;
 import com.rmshop.rmshop.repository.AttendanceLogRepository;
 import com.rmshop.rmshop.repository.UserRepository;
+import com.rmshop.rmshop.validation.InputValidator;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final AttendanceLogRepository attendanceLogRepository;
+    private final LoginAttemptService loginAttemptService;
 
-    public UserService(UserRepository userRepository, AttendanceLogRepository attendanceLogRepository) {
+    public UserService(UserRepository userRepository, AttendanceLogRepository attendanceLogRepository,
+                       LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.attendanceLogRepository = attendanceLogRepository;
+        this.loginAttemptService = loginAttemptService;
     }
 
-    public User createUser(String fullName, User.Role role, String rawAccessCode) {
+    public User createUser(String fullName, User.Role role, String rawAccessCode, String rawEmail) {
         String hashedCode = hashAccessCode(rawAccessCode);
         if (userRepository.existsByAccessCode(hashedCode)) {
             throw new IllegalArgumentException("That access code is already assigned to another account.");
         }
         User user = new User(fullName, role, hashedCode);
+        if (rawEmail != null && !rawEmail.isBlank()) {
+            user.setEmail(requireUnusedEmail(rawEmail, null));
+        }
         return userRepository.save(user);
     }
 
@@ -52,11 +57,33 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public User updateEmail(Long id, String rawEmail) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No user with id " + id));
+        user.setEmail(requireUnusedEmail(rawEmail, id));
+        return userRepository.save(user);
+    }
+
+    /**
+     * Logs in by access code. {@code clientKey} identifies the device, so
+     * repeated wrong codes from it lead to a temporary lockout. Mistyped
+     * input (too short, letters...) is rejected without counting as an attempt.
+     */
     @Transactional
-    public Optional<User> authenticate(String rawAccessCode) {
-        Optional<User> found = userRepository.findByAccessCodeAndActiveTrue(hashAccessCode(rawAccessCode));
-        found.ifPresent(user -> attendanceLogRepository.save(new AttendanceLog(user)));
-        return found;
+    public User login(String rawAccessCode, String clientKey) {
+        loginAttemptService.checkNotLocked(clientKey);
+        InputValidator.validateSixDigitCode(rawAccessCode, "accessCode", "access code");
+
+        User user = userRepository.findByAccessCode(hashAccessCode(rawAccessCode))
+                .orElseThrow(() -> loginAttemptService.recordFailure(clientKey));
+        if (!user.isActive()) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "ACCOUNT_DEACTIVATED",
+                    "This account has been deactivated. Ask your manager to reactivate it.", "accessCode")
+                    .with("severity", "danger");
+        }
+        loginAttemptService.recordSuccess(clientKey);
+        attendanceLogRepository.save(new AttendanceLog(user));
+        return user;
     }
 
     public List<User> listUsers() {
@@ -77,13 +104,18 @@ public class UserService {
         return user;
     }
 
-    private String hashAccessCode(String rawAccessCode) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(rawAccessCode.getBytes());
-            return HexFormat.of().formatHex(hash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 not available", e);
-        }
+    static String hashAccessCode(String rawAccessCode) {
+        return Hashing.sha256(rawAccessCode);
+    }
+
+    private String requireUnusedEmail(String rawEmail, Long ownerId) {
+        String email = InputValidator.validateEmail(rawEmail);
+        userRepository.findByEmail(email)
+                .filter(existing -> !existing.getId().equals(ownerId))
+                .ifPresent(existing -> {
+                    throw new ApiException(HttpStatus.CONFLICT, "EMAIL_IN_USE",
+                            "That email already belongs to another staff account.", "email");
+                });
+        return email;
     }
 }

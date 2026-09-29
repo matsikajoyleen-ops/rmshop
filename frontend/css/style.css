@@ -1699,3 +1699,207 @@ body {
         animation: none !important;
     }
 }
+/* ========================================================
+   AUTH FEEDBACK: login attempt popups, forgot-code flow
+======================================================== */
+.popup {
+    text-align: center;
+    max-width: 400px;
+}
+
+.popup-icon {
+    width: 3.4rem;
+    height: 3.4rem;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    border: 1px solid var(--border-card);
+    background: rgba(99, 102, 241, 0.14);
+}
+
+.popup.severity-warning .popup-icon { background: var(--warning-bg); border-color: var(--warning-border); }
+.popup.severity-danger .popup-icon { background: var(--danger-bg); border-color: var(--danger-border); }
+.popup.severity-success .popup-icon { background: var(--success-bg); border-color: var(--success-border); }
+
+.popup h2 {
+    margin-bottom: 0.6rem;
+}
+
+.popup.severity-warning h2 { color: #fbbf24; }
+.popup.severity-danger h2 { color: #f87171; }
+.popup.severity-success h2 { color: #34d399; }
+
+.popup-message {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.popup-countdown {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f87171;
+    margin-top: 1rem;
+}
+
+.popup .modal-actions {
+    justify-content: center;
+}
+
+.attempt-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.45rem;
+    margin-top: 1.1rem;
+}
+
+.attempt-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.attempt-dot.used { background: var(--danger); box-shadow: 0 0 8px var(--danger-border); }
+
+.attempt-caption {
+    margin-top: 0.45rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.forgot-link {
+    display: inline-block;
+    margin-top: 1.1rem;
+    color: #818cf8;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.forgot-link:hover { color: #ffffff; text-decoration: underline; }
+
+.auth-field {
+    display: block;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1.1rem;
+    text-align: left;
+}
+
+.text-input {
+    display: block;
+    width: 100%;
+    margin-top: 0.4rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg-input);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-md);
+    font-family: var(--font-main);
+    font-size: 1rem;
+    color: #ffffff;
+    transition: all 0.15s ease;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--cyan-accent);
+    box-shadow: 0 0 0 3px var(--cyan-glow);
+}
+
+.text-input.input-error {
+    border-color: var(--danger);
+    background: rgba(244, 63, 94, 0.08);
+}
+
+.field-error {
+    color: #f87171;
+    font-size: 0.84rem;
+    margin: -0.6rem 0 1rem;
+    text-align: left;
+}
+
+.field-error button {
+    background: none;
+    border: none;
+    color: #818cf8;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    margin-left: 0.25rem;
+}
+
+.info-note {
+    color: #6ee7b7;
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 0.9rem;
+    font-size: 0.86rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.step-indicator span {
+    width: 2rem;
+    height: 0.3rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.step-indicator span.done { background: var(--cyan-accent); }
+
+.auth-step[hidden] { display: none; }
+
+.auth-secondary-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.86rem;
+}
+
+.auth-secondary-actions button {
+    background: none;
+    border: none;
+    color: #818cf8;
+    font-family: var(--font-main);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.auth-secondary-actions button:disabled {
+    color: var(--text-muted);
+    cursor: default;
+}
+
+.code-label {
+    display: block;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.muted-cell { color: var(--text-muted); font-style: italic; }
+
+/* display:flex above would otherwise override the hidden attribute */
+.error-message[hidden],
+.field-error[hidden],
+.modal-error[hidden] {
+    display: none;
+}

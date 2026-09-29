@@ -116,7 +116,7 @@ function showError(message) {
 }
 
 function setLoading(isLoading, statusText = "Verifying credentials...") {
-    loginBtn.disabled = isLoading;
+    loginBtn.disabled = isLoading || terminalLocked;
     btnText.hidden = isLoading;
     btnSpinner.hidden = !isLoading;
 
@@ -135,12 +135,139 @@ function setLoading(isLoading, statusText = "Verifying credentials...") {
     }
 }
 
+// ---- Wrong-attempt handling ------------------------------------------------
+// The server counts wrong codes per device and answers with a code such as
+// WRONG_ACCESS_CODE (plus attempt / attemptsRemaining) or ACCOUNT_LOCKED
+// (plus lockedSeconds). Each attempt gets its own popup.
+
+const LOCK_STORAGE_KEY = "rmshop_login_locked_until";
+let terminalLocked = false;
+
+const ATTEMPT_POPUPS = {
+    1: { icon: "🔢", title: "Incorrect access code" },
+    2: { icon: "⚠️", title: "Second wrong attempt" },
+    3: { icon: "⚠️", title: "Careful: 2 attempts left" },
+    4: { icon: "🛑", title: "Last attempt before lockout" }
+};
+
+function setTerminalLocked(locked) {
+    terminalLocked = locked;
+    loginBtn.disabled = locked;
+    digitInputs.forEach(input => { input.disabled = locked; });
+    if (numpad) numpad.querySelectorAll("button").forEach(btn => { btn.disabled = locked; });
+}
+
+function resetDigits() {
+    digitInputs.forEach(input => input.value = "");
+    if (!terminalLocked) digitInputs[0].focus();
+}
+
+function lockTerminal(seconds, message) {
+    try { localStorage.setItem(LOCK_STORAGE_KEY, String(Date.now() + seconds * 1000)); } catch (_) {}
+    setTerminalLocked(true);
+    resetDigits();
+    showError("Terminal locked after too many wrong codes.");
+    showPopup({
+        icon: "🔒",
+        title: "Terminal locked",
+        message,
+        severity: "danger",
+        attempt: 5,
+        maxAttempts: 5,
+        countdownSeconds: seconds,
+        onCountdownEnd: unlockTerminal
+    });
+}
+
+function unlockTerminal() {
+    try { localStorage.removeItem(LOCK_STORAGE_KEY); } catch (_) {}
+    setTerminalLocked(false);
+    clearError();
+    resetDigits();
+    showPopup({
+        icon: "🔓",
+        title: "Terminal unlocked",
+        message: "You can try your access code again. If you've forgotten it, managers can reset it by email.",
+        severity: "success",
+        actions: [{ label: "OK", primary: true, onClick: () => digitInputs[0].focus() }]
+    });
+}
+
+// Keep the lock across page refreshes (the server enforces it regardless)
+(function restoreLock() {
+    let until = 0;
+    try { until = Number(localStorage.getItem(LOCK_STORAGE_KEY)) || 0; } catch (_) {}
+    const seconds = Math.round((until - Date.now()) / 1000);
+    if (seconds > 0) {
+        lockTerminal(seconds, "Too many wrong access codes were entered on this terminal. Please wait for the timer to finish.");
+    } else if (until) {
+        try { localStorage.removeItem(LOCK_STORAGE_KEY); } catch (_) {}
+    }
+})();
+
+function goToForgot() {
+    window.location.href = "forgot-password.html";
+}
+
+function handleLoginError(status, data) {
+    const message = data.message || "Something went wrong. Please try again.";
+
+    switch (data.code) {
+        case "WRONG_ACCESS_CODE": {
+            const attempt = data.attempt || 1;
+            const look = ATTEMPT_POPUPS[attempt] || ATTEMPT_POPUPS[4];
+            showError(`Wrong code: ${data.attemptsRemaining} attempt${data.attemptsRemaining === 1 ? "" : "s"} left.`);
+            resetDigits();
+            const actions = [{ label: "Try again", primary: true, onClick: () => digitInputs[0].focus() }];
+            if (attempt >= 2) actions.push({ label: "Forgot access code?", onClick: goToForgot });
+            showPopup({ ...look, message, severity: data.severity, attempt, maxAttempts: data.maxAttempts, actions });
+            return;
+        }
+        case "ACCOUNT_LOCKED":
+            lockTerminal(data.lockedSeconds || 300, message);
+            return;
+        case "ACCOUNT_DEACTIVATED":
+            showError("This account is deactivated.");
+            resetDigits();
+            showPopup({ icon: "🚫", title: "Account deactivated", message, severity: "danger",
+                actions: [{ label: "OK", primary: true }] });
+            return;
+        case "CODE_REQUIRED":
+        case "CODE_HAS_SPACES":
+        case "CODE_NOT_NUMERIC":
+        case "CODE_TOO_SHORT":
+        case "CODE_TOO_LONG":
+            // Typing mistakes: shown inline, they don't count as attempts
+            showError(message);
+            return;
+    }
+
+    if (status >= 500) {
+        showError("The server had a problem.");
+        showPopup({ icon: "🛠️", title: "Server error", severity: "warning",
+            message: "The store server ran into a problem while checking your code. Please try again in a moment." });
+    } else {
+        showError(message);
+    }
+}
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (terminalLocked) return;
 
     const accessCode = digitInputs.map(input => input.value).join("");
     if (accessCode.length !== 6) {
-        showError("Please enter all 6 digits of your terminal code.");
+        const missing = 6 - accessCode.length;
+        showError(accessCode.length === 0
+            ? "Enter your 6-digit access code."
+            : `You've entered ${accessCode.length} of 6 digits. Enter ${missing} more.`);
+        return;
+    }
+
+    if (!navigator.onLine) {
+        showError("This device is offline.");
+        showPopup({ icon: "📡", title: "No internet connection", severity: "warning",
+            message: "This device isn't connected to the internet. Check the Wi-Fi or data connection, then try again." });
         return;
     }
 
@@ -160,26 +287,22 @@ form.addEventListener("submit", async (e) => {
         });
 
         clearTimeout(coldStartTimer);
-
-        if (response.status === 401) {
-            showError("Invalid access code. Please check with your store manager.");
-            digitInputs.forEach(input => input.value = "");
-            digitInputs[0].focus();
-            return;
-        }
+        const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            showError("Server authentication error. Please try again shortly.");
+            handleLoginError(response.status, data);
             return;
         }
 
-        const user = await response.json();
-        localStorage.setItem("rmshop_user", JSON.stringify(user));
-        window.location.href = user.role === "MANAGER" ? "manager-dashboard.html" : "sales.html";
+        try { localStorage.removeItem(LOCK_STORAGE_KEY); } catch (_) {}
+        localStorage.setItem("rmshop_user", JSON.stringify(data));
+        window.location.href = data.role === "MANAGER" ? "manager-dashboard.html" : "sales.html";
 
     } catch (error) {
         clearTimeout(coldStartTimer);
-        showError("Unable to reach store server. The server may still be waking up — please try again in a moment.");
+        showError("Unable to reach the store server.");
+        showPopup({ icon: "📡", title: "Can't reach the server", severity: "warning",
+            message: "The store server didn't respond. It may still be waking up. Wait a few seconds and try again." });
     } finally {
         setLoading(false);
     }
