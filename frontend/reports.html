@@ -11,13 +11,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
 </head>
 <body class="app-body">
-    <!-- Ambient Background -->
-    <div class="ambient-bg" aria-hidden="true">
-        <div class="ambient-orb ambient-orb-1"></div>
-        <div class="ambient-orb ambient-orb-2"></div>
-        <div class="ambient-orb ambient-orb-3"></div>
-        <div class="grid-overlay"></div>
-    </div>
 
     <!-- Header Navigation -->
     <header class="topbar">
@@ -80,7 +73,7 @@
                 <div class="summary-card">
                     <div class="summary-card-header">
                         <span class="summary-label">Net Profit</span>
-                        <div class="summary-card-icon" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#34d399;">📈</div>
+                        <div class="summary-card-icon" style="background:var(--bg-surface); border-color:var(--border-subtle); color:var(--text-primary);">📈</div>
                     </div>
                     <p class="summary-value" id="profit-value" style="color:var(--success);">—</p>
                     <p class="summary-sub">Gross profit margin</p>

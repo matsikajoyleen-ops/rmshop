@@ -11,13 +11,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
 <body class="app-body">
-    <!-- Animated Ambient Background -->
-    <div class="ambient-bg" aria-hidden="true">
-        <div class="ambient-orb ambient-orb-1"></div>
-        <div class="ambient-orb ambient-orb-2"></div>
-        <div class="ambient-orb ambient-orb-3"></div>
-        <div class="grid-overlay"></div>
-    </div>
 
     <!-- Header Navigation -->
     <header class="topbar">
@@ -81,12 +74,12 @@
                     <svg class="sparkline-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="gradRevenue" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.4"/>
-                                <stop offset="100%" stop-color="#6366f1" stop-opacity="0.0"/>
+                                <stop offset="0%" stop-color="#1f6fe5" stop-opacity="0.4"/>
+                                <stop offset="100%" stop-color="#1f6fe5" stop-opacity="0.0"/>
                             </linearGradient>
                         </defs>
                         <path d="M0,40 Q30,35 60,38 T120,25 T180,28 T240,15 T300,8 L300,50 L0,50 Z" fill="url(#gradRevenue)" />
-                        <path d="M0,40 Q30,35 60,38 T120,25 T180,28 T240,15 T300,8" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M0,40 Q30,35 60,38 T120,25 T180,28 T240,15 T300,8" fill="none" stroke="#1f6fe5" stroke-width="2.5" stroke-linecap="round" />
                     </svg>
                 </div>
             </div>
@@ -106,12 +99,12 @@
                     <svg class="sparkline-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="gradStock" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
-                                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.0"/>
+                                <stop offset="0%" stop-color="#e8703a" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="#e8703a" stop-opacity="0.0"/>
                             </linearGradient>
                         </defs>
                         <path d="M0,35 Q40,30 90,32 T170,38 T230,22 T300,30 L300,50 L0,50 Z" fill="url(#gradStock)" />
-                        <path d="M0,35 Q40,30 90,32 T170,38 T230,22 T300,30" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M0,35 Q40,30 90,32 T170,38 T230,22 T300,30" fill="none" stroke="#e8703a" stroke-width="2.5" stroke-linecap="round" />
                     </svg>
                 </div>
             </div>
@@ -128,12 +121,12 @@
                     <svg class="sparkline-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="gradPerf" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.35"/>
-                                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.0"/>
+                                <stop offset="0%" stop-color="#111111" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="#111111" stop-opacity="0.0"/>
                             </linearGradient>
                         </defs>
                         <path d="M0,45 Q50,40 100,28 T200,22 T250,15 T300,5 L300,50 L0,50 Z" fill="url(#gradPerf)" />
-                        <path d="M0,45 Q50,40 100,28 T200,22 T250,15 T300,5" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M0,45 Q50,40 100,28 T200,22 T250,15 T300,5" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round" />
                     </svg>
                 </div>
             </div>
@@ -160,7 +153,7 @@
             <a href="sales.html" class="nav-card">
                 <div>
                     <div class="nav-card-top">
-                        <div class="nav-card-icon-box" style="background:rgba(6,182,212,0.12); border-color:rgba(6,182,212,0.3); color:#38bdf8;">🛒</div>
+                        <div class="nav-card-icon-box" style="background:var(--bg-surface); border-color:var(--border-subtle); color:var(--text-primary);">🛒</div>
                         <div class="nav-arrow-badge">→</div>
                     </div>
                     <h3>POS Cashier Till</h3>
@@ -171,7 +164,7 @@
             <a href="staff.html" class="nav-card">
                 <div>
                     <div class="nav-card-top">
-                        <div class="nav-card-icon-box" style="background:rgba(139,92,246,0.12); border-color:rgba(139,92,246,0.3); color:#c084fc;">👥</div>
+                        <div class="nav-card-icon-box" style="background:var(--bg-surface); border-color:var(--border-subtle); color:var(--text-primary);">👥</div>
                         <div class="nav-arrow-badge">→</div>
                     </div>
                     <h3>Staff Management</h3>
@@ -182,7 +175,7 @@
             <a href="reports.html" class="nav-card">
                 <div>
                     <div class="nav-card-top">
-                        <div class="nav-card-icon-box" style="background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3); color:#34d399;">📊</div>
+                        <div class="nav-card-icon-box" style="background:var(--bg-surface); border-color:var(--border-subtle); color:var(--text-primary);">📊</div>
                         <div class="nav-arrow-badge">→</div>
                     </div>
                     <h3>Financial & Sales Reports</h3>
